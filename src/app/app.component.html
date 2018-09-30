@@ -24,6 +24,8 @@
     <div class="col-xs-12">
 
       <h2>Mes appareils</h2>
+      <p>Mise à jour : {{ lastUpdate | async | date: 'short' }}</p>
+      <p>Mise à jour second format : {{ lastUpdate | async | date: 'yMMMMEEEEd' | uppercase }}</p>
 
       <ul class="list-group">
         <app-appareil *ngFor="let appareil of appareils" [appareilName]="appareil.name" [appareilStatus]="appareil.status"></app-appareil>
