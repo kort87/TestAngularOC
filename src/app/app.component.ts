@@ -9,9 +9,20 @@ export class AppComponent {
   title = 'app';
   isAuth = false;
 
-  appareilOne = 'machine à laver';
-  appareilTwo = 'four';
-  appareilThree = 'PC';
+  appareils = [
+    {
+      name: 'Machine à laver',
+      status: 'éteint'
+    },
+    {
+      name: 'Four',
+      status: 'allumé'
+    },
+    {
+      name: 'PC',
+      status: 'éteint'
+    }
+  ];
 
   constructor() {
     setTimeout(
