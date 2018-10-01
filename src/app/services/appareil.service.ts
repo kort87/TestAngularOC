@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +8,9 @@ export class AppareilService {
 
   private STATUS_ETEINT = 'éteint';
   private STATUS_ALLUME = 'allumé';
-  appareils = [
+
+  appareilSubject = new Subject<any[]>();
+  private appareils = [
     {
       id: 1,
       name: 'Machine à laver',
@@ -33,24 +36,33 @@ export class AppareilService {
     );
     return appareil;
   }
+
+  emitAppareilSubject() {
+    this.appareilSubject.next(this.appareils.slice());
+  }
+
   switchOnAll() {
     for (const appareil of this.appareils) {
       appareil.status = this.STATUS_ALLUME;
     }
+    this.emitAppareilSubject();
   }
 
   switchOffAll() {
     for (const appareil of this.appareils) {
       appareil.status = this.STATUS_ETEINT;
     }
+    this.emitAppareilSubject();
   }
 
   switchOnOne(i: number) {
     this.appareils[i].status = this.STATUS_ALLUME;
+    this.emitAppareilSubject();
   }
 
   switchOffOne(i: number) {
     this.appareils[i].status = this.STATUS_ETEINT;
+    this.emitAppareilSubject();
   }
 
   getStatusAllume() {
