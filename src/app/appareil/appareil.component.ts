@@ -7,12 +7,10 @@ import { AppareilService } from '../services/appareil.service';
   styleUrls: ['./appareil.component.scss']
 })
 export class AppareilComponent implements OnInit {
-  @Input()
-  appareilName: string;
-  @Input()
-  appareilStatus: string;
-  @Input()
-  index: number;
+  @Input() appareilName: string;
+  @Input() appareilStatus: string;
+  @Input() index: number;
+  @Input() id: number;
 
   constructor(protected appareilService: AppareilService) {}
 
