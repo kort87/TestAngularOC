@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -9,14 +10,13 @@ import { interval, Subscription } from 'rxjs';
 export class AppComponent implements OnInit, OnDestroy {
   title = 'app';
   isAuth = false;
+  authSubscription: Subscription;
 
   secondes: number;
   counterSubscription: Subscription;
 
-  constructor() {
-    setTimeout(() => {
-      this.isAuth = true;
-    }, 4000);
+  constructor(private authService: AuthService) {
+
   }
 
   ngOnInit() {
@@ -26,10 +26,15 @@ export class AppComponent implements OnInit, OnDestroy {
       (error) => console.log('An error occured! ' + error),
       () => console.log('Observable complete!')
     );
+    this.authSubscription = this.authService.authSubject.subscribe(
+      (isAuth: boolean) => this.isAuth = isAuth
+    );
+    this.authService.emitAuthentication();
   }
 
   ngOnDestroy() {
     this.counterSubscription.unsubscribe();
+    // this.authSubscription.unsubscribe();
   }
 
 }
