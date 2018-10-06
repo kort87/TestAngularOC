@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -10,25 +11,9 @@ export class AppareilService {
   private STATUS_ALLUME = 'allumé';
 
   appareilSubject = new Subject<any[]>();
-  private appareils = [
-    {
-      id: 1,
-      name: 'Machine à laver',
-      status: this.STATUS_ETEINT
-    },
-    {
-      id: 2,
-      name: 'Four',
-      status: this.STATUS_ALLUME
-    },
-    {
-      id: 3,
-      name: 'PC',
-      status: this.STATUS_ETEINT
-    }
-  ];
+  private appareils = [];
 
-  constructor() { }
+  constructor(private httpClient: HttpClient) { }
 
   getAppareilById(id: number) {
     const appareil = this.appareils.find(
@@ -45,6 +30,7 @@ export class AppareilService {
     for (const appareil of this.appareils) {
       appareil.status = this.STATUS_ALLUME;
     }
+    this.saveAppareilsToServer();
     this.emitAppareilSubject();
   }
 
@@ -52,16 +38,19 @@ export class AppareilService {
     for (const appareil of this.appareils) {
       appareil.status = this.STATUS_ETEINT;
     }
+    this.saveAppareilsToServer();
     this.emitAppareilSubject();
   }
 
   switchOnOne(i: number) {
     this.appareils[i].status = this.STATUS_ALLUME;
+    this.saveAppareilsToServer();
     this.emitAppareilSubject();
   }
 
   switchOffOne(i: number) {
     this.appareils[i].status = this.STATUS_ETEINT;
+    this.saveAppareilsToServer();
     this.emitAppareilSubject();
   }
 
@@ -83,6 +72,30 @@ export class AppareilService {
     appareilObject.status = status;
     appareilObject.id = this.appareils[this.appareils.length - 1].id + 1;
     this.appareils.push(appareilObject);
+    this.saveAppareilsToServer();
     this.emitAppareilSubject();
+  }
+
+  saveAppareilsToServer() {
+    this.httpClient
+      .put('https://rbetestoc.firebaseio.com/appareils.json', this.appareils)
+      .subscribe(
+        () => console.log('Enregistrement terminé!'),
+        (error) => console.log('Une erreur est survenue : ' + error)
+      );
+  }
+
+  getAppareilsFromServer() {
+    this.httpClient
+      .get<any[]>('https://rbetestoc.firebaseio.com/appareils.json')
+      .subscribe(
+        (response) => {
+          this.appareils = response;
+          this.emitAppareilSubject();
+        },
+        (error) => {
+          console.log('Une erreur est survenue sur le get() : ' + error);
+        }
+      );
   }
 }
